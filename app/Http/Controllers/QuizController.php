@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ExchangeResource;
 use App\Services\ExchangeService;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 /**
  *
@@ -21,9 +22,12 @@ class QuizController extends Controller
 
     public function getExchangeRate(Request $request)
     {
-        $response = collect([]);
-        // TODO: 實作取得匯率
-        // API回傳結果
-        return new ExchangeResource($response);
+        //$client   = new Client();
+        //$response = $client->get('https://tw.rter.info/capi.php');
+        //$rateData = json_decode($response->getBody(), true);
+        $content=file_get_contents('https://tw.rter.info/capi.php');
+        $rate = json_decode($content, true);
+        $key= $request->input('toVert').$request->input('fromVert');
+        return $rate[$key] ?? '找不到匯率結果!';
     }
 }
